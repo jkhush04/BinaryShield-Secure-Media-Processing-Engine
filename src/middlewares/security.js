@@ -1,7 +1,7 @@
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
-import { config } from "../config/env.js";
+//import { config } from "../config/env.js";
 
 export const securityMiddleware = (app) => {
   app.use(helmet());
@@ -11,12 +11,18 @@ export const securityMiddleware = (app) => {
     methods: ["POST", "GET"]
   }));
 
-  const limiter = rateLimit({
+  /* const limiter = rateLimit({
     windowMs: config.rateLimitWindow,
     max: config.rateLimitMax,
     standardHeaders: true,
     legacyHeaders: false,
   });
+  app.use(limiter); */
 
-  app.use(limiter);
+  const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+  app.use(generalLimiter);
+
 };

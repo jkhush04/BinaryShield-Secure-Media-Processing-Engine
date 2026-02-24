@@ -4,11 +4,12 @@ const allowedMimeTypes = [
   "image/png",
   "image/jpeg",
   "image/webp",
+  "image/jpg",
 ];
 
 export const validateFileType = async (req, res, next) => {
-  console.log("FILE OBJECT:", req.file);
-  console.log("BUFFER FIRST 16 BYTES:", req.file?.buffer?.slice(0, 16));
+ // console.log("FILE OBJECT:", req.file);
+  //console.log("BUFFER FIRST 16 BYTES:", req.file?.buffer?.slice(0, 16));
 
   try {
     if (!req.file) {

@@ -6,8 +6,11 @@ import uploadRoutes from "./src/routes/upload.routes.js";
 import imageRoutes from "./src/routes/image.routes.js";
 
 const app = express();
+//app.set("trust proxy", 1);  // add later when deploying behind a proxy
 
 app.use(express.json({ limit: "1mb" }));
+
+
 
 securityMiddleware(app);
 
@@ -18,3 +21,4 @@ app.use("/images", imageRoutes);
 app.use(errorHandler);
 
 export default app;
+

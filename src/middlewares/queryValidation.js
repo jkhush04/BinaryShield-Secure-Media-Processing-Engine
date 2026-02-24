@@ -3,7 +3,7 @@ import { z } from "zod";
 const querySchema = z.object({
   width: z.string().optional(),
   height: z.string().optional(),
-  format: z.enum(["webp", "jpeg", "png"]).optional(),
+  format: z.enum(["webp", "jpeg","jpg", "png"]).optional(),
   quality: z.string().optional(),
 });
 

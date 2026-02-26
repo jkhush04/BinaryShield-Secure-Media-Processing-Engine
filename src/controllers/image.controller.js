@@ -1,4 +1,4 @@
-import { convertImage } from "../services/image.service.js";
+import { convertImage } from "../workers/imageWorker.js";
 
 export const convertHandler = async (req, res) => {
   

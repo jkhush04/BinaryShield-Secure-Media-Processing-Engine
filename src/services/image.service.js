@@ -1,47 +1,69 @@
 import sharp from "sharp";
+import pLimit from "p-limit";
 
+const limit = pLimit(2); // allow only 3 conversions at same time
+
+let activeJobs = 0;
 export const convertImage = async (buffer, options) => {
-  const { width, height, format, quality } = options;
+  return await limit(async () => {
+    // console.log("START:", Date.now());
 
-  const image = sharp(buffer);
+    activeJobs++;
+    console.log("START - Active jobs:", activeJobs);
 
-  // 🔐 Get metadata first
-  const metadata = await image.metadata();
+  try{
+  //  await new Promise(resolve => setTimeout(resolve, 10000)); // simulate long processing time
+    const { width, height, format, quality } = options;
 
-  const maxPixels = 20_000_000; // 20 megapixels limit
-  console.log("Width:", metadata.width);
-  console.log("Height:", metadata.height);
-  console.log("Total pixels:", metadata.width * metadata.height);
+    const image = sharp(buffer);
 
-  if (metadata.width * metadata.height > maxPixels) {
-    throw new Error("Image dimensions too large");
+    // 🔐 Get metadata first
+    const metadata = await image.metadata();
+
+    const maxPixels = 12_000_000; // 12 megapixels limit
+    //console.log("Width:", metadata.width);
+    //console.log("Height:", metadata.height);
+    //console.log("Total pixels:", metadata.width * metadata.height);
+
+    if (metadata.width * metadata.height > maxPixels) {
+      throw new Error("Image dimensions too large");
+    }
+
+
+
+    const maxResizeWidth = 4000;
+    const maxResizeHeight = 4000;
+      
+    if (width && width > maxResizeWidth) {
+      throw new Error("Requested width too large");
+    }
+
+    if (height && height > maxResizeHeight) {
+      throw new Error("Requested height too large");
+    }
+
+    let transformer = image;
+
+    // Resize if provided
+    if (width || height) {
+      transformer = transformer.resize(width, height);
+    }
+
+    // Format conversion
+    if (format === "webp") {
+      transformer = transformer.webp({ quality: quality || 80 });
+    } else if (format === "jpeg") {
+      transformer = transformer.jpeg({ quality: quality || 80 });
+    } else if (format === "png") {
+      transformer = transformer.png();
+    }
+
+
+    //console.log("END:", Date.now());
+    return await transformer.toBuffer();
   }
-
-  let transformer = image;
-  
-  const maxResizeWidth = 4000;
-  const maxResizeHeight = 4000;
-
-  if (width && width > maxResizeWidth) {
-    throw new Error("Requested width too large");
+  finally {    activeJobs--;
+    console.log("END - Active jobs:", activeJobs);
   }
-
-  if (height && height > maxResizeHeight) {
-    throw new Error("Requested height too large");
-  }
-  // Resize if provided
-  if (width || height) {
-    transformer = transformer.resize(width, height);
-  }
-
-  // Format conversion
-  if (format === "webp") {
-    transformer = transformer.webp({ quality: quality || 80 });
-  } else if (format === "jpeg") {
-    transformer = transformer.jpeg({ quality: quality || 80 });
-  } else if (format === "png") {
-    transformer = transformer.png();
-  }
-
-  return await transformer.toBuffer();
+  });
 };

@@ -3,7 +3,8 @@ import fs from "fs";
 import path from "path";
 import { config } from "./src/config/env.js";
 import { logger } from "./src/utils/logger.js";
-import { isFileActive } from "./utils/jobManager.js";
+import { isFileActive } from "./src/utils/vdjobManager.js";
+
 
 app.listen(config.port, () => {
   logger.info(`BinaryShield running on port ${config.port}`);

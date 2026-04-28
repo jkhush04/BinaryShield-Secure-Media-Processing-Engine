@@ -19,6 +19,6 @@ const upload = multer({
   limits: { fileSize: 200 * 1024 * 1024 } // 200MB
 });
 
-router.post("/convert", upload.single("file"), handleVideoConvert);
+router.post("/process", upload.single("file"), handleVideoConvert);
 
 export default router;

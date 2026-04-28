@@ -10,6 +10,6 @@ services:
       - RATE_LIMIT_WINDOW_MS=900000
       - RATE_LIMIT_MAX=100
     volumes:
-      - .:/app
+     # - .:/app
       - /app/node_modules
     restart: unless-stopped

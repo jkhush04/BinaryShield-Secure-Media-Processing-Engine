@@ -12,7 +12,10 @@ router.post(
     res.status(200).json({
       success: true,
       message: "File validated successfully",
-      detectedType: req.verifiedFileType,
+      detectedType: {
+        mime: req.verifiedFileType.mime,
+        ext: req.verifiedFileType.ext
+      },
     });
   }
 );
